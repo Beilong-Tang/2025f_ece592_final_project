@@ -1,4 +1,6 @@
 \documentclass[letterpaper, 11 pt]{article} 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{amsmath,amsfonts,amssymb,color}
 \usepackage{mathtools}
 \usepackage{dsfont}
@@ -94,10 +96,10 @@ where $x^{*}=\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}\sum_{t=1}^{
 
 \subsection{Adagrad}
 
-Following Adagrad \cite{duchi2011adagrad}, we use the Bregman divergence as followed:
+Following Adagrad \cite{duchi2011adagrad},
 \begin{equation}
     B_{\psi}(x,y) = \psi(x) - \psi(y) - \langle \nabla \psi(y), x-y\rangle
-\end{equation}
+\end{equation} denotes the Bregman divergence where $\psi$ is a strongly convex and differentiable function.
 
 Firstly, let us simplify the algorithm for Adagrad.
 
@@ -106,7 +108,21 @@ Here, we give a simplified proof of the convergence of Adagrad.
 Suppose our update rule is 
 \begin{equation} \label{eq:adagrad_update}
     x_{t+1}=\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}\{\eta \langle  g_t,x\rangle + B_{\psi_t}(x,x_t) \}
-\end{equation} which is the Equation (4) in Adagrad \cite{duchi2011adagrad} using composite mirror descent update rule where the fixed regualization function is omitted for simplicity. 
+\end{equation} which is the Equation (4) in Adagrad \cite{duchi2011adagrad} using composite mirror descent update rule where the fixed regualization function is omitted for simplicity.
+
+\begin{algorithm}[t]
+\caption{Generic Adaptive Method Setup}
+\label{alg:generic_adaptive}
+\begin{algorithmic}[1] % or without [1] if disable the line number.
+\Require $x_1 \in \mathcal{F}$, step size $\{\alpha_t > 0\}_{t=1}^T$, sequence of functions $\{\phi_t, \psi_t\}_{t=1}^T$
+\For{$t = 1$ {\bf to} $T$}
+    \State $g_t = \nabla f_t(x_t)$
+    \State $m_t = \phi_t(g_1, \ldots, g_t)$ \textbf{and} $V_t = \psi_t(g_1, \ldots, g_t)$
+    \State $\hat{x}_{t+1} = x_t - \alpha_t m_t / \sqrt{V_t}$
+    \State $x_{t+1} = \Pi_{\mathcal{F}, \sqrt{V_t}}(\hat{x}_{t+1})$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 
 Firstly, we show that Equation~\ref{eq:adagrad_update} is equivalent to:
