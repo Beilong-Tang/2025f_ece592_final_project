@@ -1,0 +1,123 @@
+\documentclass[letterpaper, 11 pt]{article} 
+\usepackage{amsmath,amsfonts,amssymb,color}
+\usepackage{mathtools}
+\usepackage{dsfont}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{mygreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{winered}{rgb}{0.8,0,0}
+\definecolor{myblue}{rgb}{0,0,0.8}
+\usepackage{tikz}
+%\usepackage{pmat}
+\usepackage{amsthm}
+\usepackage{empheq}
+\newcommand*\widefbox[1]{\fbox{\hspace{0.2em}#1\hspace{0.2em}}}
+\newcommand{\mycaption}[1]{\stepcounter{figure}\raisebox{-7pt}
+  {\footnotesize Fig. \thefigure.\hspace{3pt} #1}}
+%\theoremstyle{plain}
+\newtheorem{problem}{Problem}
+\newtheorem{condition}{Condition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newtheorem{assumption}{Assumption}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\newcommand{\mc}{\mathcal}
+\newcommand{\mb}{\mathbf}
+%\newtheorem{proof}{Proof}
+\newtheorem{example}{Example}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+\DeclarePairedDelimiterX{\norm}[1]{\lVert}{\rVert}{#1}
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}
+%\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{epstopdf}
+\usepackage{tikz}
+\usepackage{relsize}
+\usetikzlibrary{shapes,arrows}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor={winered},
+    citecolor={mygreen}
+}
+%\usepackage{subcaption}
+\usepackage{cite}
+%\theoremstyle{plain}
+%\usepackage{scalerel}
+%\DeclareMathOperator*{\Bigcdots}{\scalerel*{\cdots}{\bigodot}}
+\usepackage[margin=1in]{geometry}
+\title{\LARGE Adagrad, Adam, and AMSGrad}
+\author{Beilong Tang
+% <-this % stops a space
+\thanks{Beilong Tang is with the Department of ECE at North Carolina State University. Email: {\tt btang5@ncsu.edu}.}}
+\date{}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+\begin{abstract}
+In this project, I will analyze the convergence of three famous adaptive methods: Adagrad, Adam, and AMSGrad in a simple manner. We limit our analysis for convex functions.
+\end{abstract} 
+
+\section{Introduction}
+
+\subsection{Related work}
+In class, we studied the convergence proofs for Stochastic Gradient Descent (SGD) and Gradient Descent (GD). These proofs typically rely on selecting step sizes using properties such as smoothness or strong convexity of the loss function. However, in most deep learning applications, the loss landscape is highly non-convex and often nonsmooth, making such assumptions invalid. This raises a natural question: how can we design SGD-like algorithms that guarantee convergence without requiring carefully tuned step sizes?
+
+A major step toward answering this question was the introduction of AdaGrad \cite{duchi2011adagrad}, one of the first adaptive optimization algorithms. AdaGrad adjusts the step size dynamically using the cumulative history of squared gradients and achieves strong theoretical convergence guarantees. Despite this, its practical performance is often suboptimal: the effective learning rate continues to decay over time, and early gradients may dominate the accumulated statistics, causing the algorithm to slow down excessively.
+
+To address these issues, Adam \cite{Kingma2014adam} was proposed. Adam uses exponential moving averages of both first- and second-order moments to compute adaptive step sizes. It retains the theoretical flavor of AdaGrad while performing significantly better in large-scale deep learning tasks, eventually becoming one of the most widely used optimizers. However, the original convergence proof of Adam contains several issues, later identified and corrected in \cite{reddi2019convergence}, which introduced AMSGrad, a variant of Adam that fixes these shortcomings.
+
+\subsection{Outline}
+In this project, I will begin by presenting a simplified convergence proof of AdaGrad and analyzing its behavior in both sparse and dense gradient regimes. I will then discuss the practical limitations of AdaGrad and motivate the development of Adam. Next, I will outline a simplified version of Adam’s convergence proof and highlight the mistakes in the original analysis. Finally, I will introduce AMSGrad and explain how it resolves these issues, leading to a more robust variant of Adam.
+
+\section{Problem Formulation}
+
+Similar to the SGD setting in class, our loss function is noisy. We denote the convex noisy loss objective as $f(x)$ where $x$ denotes our model parameters. Our goal is to minimize $\mathbb{E}[f(x)]$ w.r.t $x$. We observe $f_1(x_1), f_2(x_2), f_3(x_3),\dots,f_T(x_T)$ as our loss functions at time steps $1,2,\dots,T$. One reason of the stochasticity comes from the training of minibatches (same to SGD 2 as we discussed in class). We denote $g(x)=\nabla_xf(x)$.
+
+However, instead of knowing the true loss function, we can only observe noisy loss functions until our current time step $T$. Hence, we want to minimize our regret:
+\begin{equation}
+    R(T)=\sum_{t=1}^T[f_t(x_t)-f_t(x^*)] 
+\end{equation}
+where $x^{*}=\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}\sum_{t=1}^{T}f_{t}(x)$ denotes our optimal solution, and $\mathcal{X}$ denotes our parameter domain. We can view $R(T)$ as the average of loss until the current loss. We use it because we cannot observe our true loss due to the noise. Hence, using single loss will lead to inaccurate estimation, thus we take the average.  
+
+\section{Main Results/Algorithms}
+
+\subsection{Adagrad}
+
+Let us define the breg
+
+Firstly, let us simplify the algorithm for Adagrad.
+
+Here, we give a simplified proof of the convergence of Adagrad.
+
+Suppose our update rule is 
+\begin{equation} \label{eq:adagrad_update}
+    x_{t+1}=\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}\{\eta \langle  g_t,x\rangle + B_{\psi_t}(x,x_t) \}
+\end{equation} which is the Equation (4) in Adagrad \cite{duchi2011adagrad} using composite mirror descent update rule where the fixed regualization function is omitted for simplicity. 
+
+
+Firstly, we show that Equation~\ref{eq:adagrad_update} is equivalent to:
+
+\section{Conclusion}
+A short conclusion summarizing your findings in the course project, and a discussion of open directions. Limit to at most a page.  
+
+
+
+
+
+\bibliographystyle{unsrt}
+%\setcitestyle{authoryear,open={square} and close={square}}
+\bibliography{refs}
+
+
+\end{document}

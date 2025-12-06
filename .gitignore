@@ -1,0 +1,61 @@
+## Core LaTeX auxiliary files
+*.aux
+*.log
+*.toc
+*.out
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.blg
+
+## Intermediate files
+*.dvi
+*.ps
+*.nav
+*.snm
+*.vrb
+*.xdv
+
+## BibTeX / Biber
+*.bcf
+*.run.xml
+
+## Glossaries / Index
+*.glo
+*.gls
+*.glsdefs
+*.ist
+*.acn
+*.acr
+*.alg
+*.glg
+*.ilg
+*.ind
+*.inx
+
+## Beamer / TikZ
+*.nav
+*.snm
+
+## Auto-generated files
+*.cls.auto
+*.sty.auto
+
+## Latexmk
+latexmkrc
+
+## Mac / OS-specific
+.DS_Store
+Thumbs.db
+
+## VSCode / editors
+.vscode/
+*.swp
+*.swo
+
+## Output files
+*.pdf
