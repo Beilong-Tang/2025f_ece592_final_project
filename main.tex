@@ -82,9 +82,9 @@ In this project, I will begin by presenting a simplified convergence proof of Ad
 
 \section{Problem Formulation}
 
-Similar to the SGD setting in class, our loss function is noisy. We denote the convex noisy loss objective as $f(x)$ where $x$ denotes our model parameters. Our goal is to minimize $\mathbb{E}[f(x)]$ w.r.t $x$. We observe $f_1(x_1), f_2(x_2), f_3(x_3),\dots,f_T(x_T)$ as our loss functions at time steps $1,2,\dots,T$. One reason of the stochasticity comes from the training of minibatches (same to SGD 2 as we discussed in class). We denote $g(x)=\nabla_xf(x)$.
+Similar to the SGD setting in class, our loss function is noisy. We denote the convex noisy loss objective as $f(x)$ where $x$ denotes our model parameters. Our goal is to minimize $\mathbb{E}[f(x)]$ w.r.t $x$. We observe $f_1(x_1), f_2(x_2), f_3(x_3),\dots,f_T(x_T)$ as our loss functions at time steps $1,2,\dots,T$. One reason of the stochasticity comes from the training of minibatches (same to SGD 2 as we discussed in class). We denote $g_t=\nabla_{x_t} f(x_t)$ be the gradient at the $t$th step. Let $g_{i:t}=[g_1, g_2,\dots,g_t]$ detnoes the matrix obtained by the contatenating the gradients until time $t$.
 
-However, instead of knowing the true loss function, we can only observe noisy loss functions until our current time step $T$. Hence, we want to minimize our regret:
+Instead of knowing the true loss function, we can only observe noisy loss functions until our current time step $T$. Hence, we want to minimize our regret:
 \begin{equation}
     R(T)=\sum_{t=1}^T[f_t(x_t)-f_t(x^*)] 
 \end{equation}
@@ -94,7 +94,10 @@ where $x^{*}=\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}\sum_{t=1}^{
 
 \subsection{Adagrad}
 
-Let us define the breg
+Following Adagrad \cite{duchi2011adagrad}, we use the Bregman divergence as followed:
+\begin{equation}
+    B_{\psi}(x,y) = \psi(x) - \psi(y) - \langle \nabla \psi(y), x-y\rangle
+\end{equation}
 
 Firstly, let us simplify the algorithm for Adagrad.
 
