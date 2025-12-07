@@ -141,27 +141,23 @@ Also, we know that
 $$
 \nabla_{x_{t+1}} h_t(x_{t+1}) = \eta g_t + H_t x_{t+1} - H_t x_t
 $$
-If we set $\nabla_x h_t(x)=0$, we will get exactly Equation~\ref{eq:thm1}. Also, we know that $\operatorname{arg}\operatorname{min}_x h_t(x)$ is equal to finding the point where $\nabla_x h_t(x)=0$. 
-
-
-hence finding
-$ x_{t+1}=
-\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}h(x) 
-$
-is equivalent to finding 
-$
-x\in \mathcal{R} : \nabla_x(h_x) = 0
-$
-\begin{equation}
-    \nabla_x h(x) = \eta g_t + H_t x - H_t x_t \\
-\end{equation}
-Setting $\nabla_x h(x)=0$ gives 
-$$
-x= x_t - \eta H^{-1}g_t
-$$
+If we set $\nabla_x h_t(x)=0$, we will get exactly Equation~\ref{eq:thm1}. Also, we know that $\operatorname{arg}\operatorname{min}_x h_t(x)$ is equal to finding the point where $\nabla_x h_t(x)=0$. Hence, we conclude our proof.
 \end{proof}
 
-We can see that this update rule is similar to SGD or GD-like update rule.
+Next, we will provide one proposition and use it to prove the convergence.
+
+\begin{proposition}
+    Let sequence $\{x_t\}$ be defined by the update rule in Equation~\ref{eq:adagrad_composite}. Then for any $x^*$:
+    \begin{align}
+& \sum_{t=1}^{T} \bigl(f_t(x_t) - f_t(x^*)\bigr) \\
+&\le \frac{1}{\eta} B_{\psi_1}(x^*,x_1)
+ + \frac{1}{\eta}\sum_{t=1}^{T-1}\!\left[B_{\psi_{t+1}}(x^*,x_{t+1}) - B_{\psi_t}(x^*,x_{t+1})\right] \nonumber
++\frac{\eta}{2}\sum_{t=1}^T \left\| g_t \right\|_{\psi_t^*}^2.
+\end{align}
+
+where $\psi_t^*$ is the assosiated 
+    
+\end{proposition}
 
 \section{Conclusion}
 A short conclusion summarizing your findings in the course project, and a discussion of open directions. Limit to at most a page.  
