@@ -129,14 +129,20 @@ The update rule in Adagrad is equivalent to the update rule in Equation~\ref{eq:
 \end{theorem}
 
 \begin{proof}
-Let \begin{equation}
+Let $h_t(x) =\eta \langle  g_t,x\rangle + B_{\psi_t}(x,x_t)$, and let  \begin{equation}
 % h(x) = \eta \langle  g_t,x\rangle + B_{\psi_t}(x,x_t)
-x_{t+1} = x_t - \eta H^{-1}g_t
+x_{t+1} = x_t - \eta H^{-1}_t g_t
 \end{equation}
 Then 
-\begin{align*}
-    Hx_{t} - Hx_{t+1} = -\eta g_t
-\end{align*}
+\begin{equation} \label{eq:thm1}
+    \eta g_t + H_t x_{t+1} - H_t x_t = 0
+\end{equation}
+Also, we know that 
+$$
+\nabla_{x_{t+1}} h_t(x_{t+1}) = \eta g_t + H_t x_{t+1} - H_t x_t
+$$
+If we set $\nabla_x h_t(x)=0$, we will get exactly Equation~\ref{eq:thm1}. Also, we know that $\operatorname{arg}\operatorname{min}_x h_t(x)$ is equal to finding the point where $\nabla_x h_t(x)=0$. 
+
 
 hence finding
 $ x_{t+1}=
