@@ -84,7 +84,7 @@ In this project, I will begin by presenting a simplified convergence proof of Ad
 
 \section{Problem Formulation}
 
-Similar to the SGD setting in class, our loss function is noisy. We denote the convex noisy loss objective as $f(x)$ where $x$ denotes our model parameters. Our goal is to minimize $\mathbb{E}[f(x)]$ w.r.t $x$. We observe $f_1(x_1), f_2(x_2), f_3(x_3),\dots,f_T(x_T)$ as our loss functions at time steps $1,2,\dots,T$. One reason of the stochasticity comes from the training of minibatches (same to SGD 2 as we discussed in class). We denote $g_t=\nabla_{x_t} f(x_t)$ be the gradient at the $t$th step. Let $g_{i:t}=[g_1, g_2,\dots,g_t]$ detnoes the matrix obtained by the contatenating the gradients until time $t$.
+Similar to the SGD setting in class, our loss function is noisy. We denote the convex noisy loss objective as $f(x)$ where $x$ denotes our model parameters. Our goal is to minimize $\mathbb{E}[f(x)]$ w.r.t $x$. We observe $f_1(x_1), f_2(x_2), f_3(x_3),\dots,f_T(x_T)$ as our loss functions at time steps $1,2,\dots,T$. One reason of the stochasticity comes from the training of minibatches (same to SGD 2 as we discussed in class). We denote $g_t=\nabla_{x_t} f(x_t)$ be the gradient at the $t$th step. Let $g_{i:t}=[g_1, g_2,\dots,g_t]$ detnoes the matrix obtained by the contatenating the gradients until time $t$. We use $g_t^2$ to denote the element-wise square of vector $g_t$.
 
 Instead of knowing the true loss function, we can only observe noisy loss functions until our current time step $T$. Hence, we want to minimize our regret:
 \begin{equation}
@@ -95,51 +95,67 @@ where $x^{*}=\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}\sum_{t=1}^{
 \section{Main Results/Algorithms}
 
 \subsection{Adagrad}
+\begin{algorithm}[t]
+\caption{Adagrad Algorithm}
+\label{alg:adagrad}
+\begin{algorithmic}[1] % or without [1] if disable the line number.
+\Require $(\text{Step size}) \eta>0$, $x_1 = 0$
+\For{$t = 1$ {\bf to} $T$}
+    \State $g_t = \nabla f_t(x_t)$
+    \State $H_t = \text{diag}(\sum_{i=1}^{T}g_i^2)$
+    \State $x_{t+1} = x_t - \eta H_t^{-1}g_t \quad \textit{(Update Rule)}$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
-Following Adagrad \cite{duchi2011adagrad},
+The simplified version of Adagrad is given in Algorithm~\ref{alg:adagrad}. The main update rule is line 4 where we use the summation of the past squared gradients to adjust the learning rate.
+
+Next, we give a simplified proof of the convergence of Adagrad.
+
+Following Adagrad \cite{duchi2011adagrad}, we let
 \begin{equation}
     B_{\psi}(x,y) = \psi(x) - \psi(y) - \langle \nabla \psi(y), x-y\rangle
-\end{equation} denotes the Bregman divergence where $\psi$ is a strongly convex and differentiable function.
+\end{equation} denote the Bregman divergence where $\psi$ is a strongly convex and differentiable function.
 
-Here, we give a simplified proof of the convergence of Adagrad.
+One specific update rule is called the composite mirror descent update rule. It is also mentioned in Adagrad;
+\begin{equation} \label{eq:adagrad_composite}
+    x_{t+1}=\operatorname{arg}\operatorname*{min}_{x}\{\eta \langle  g_t,x\rangle + B_{\psi_t}(x,x_t) \}
+\end{equation} which is the Equation (4) in Adagrad \cite{duchi2011adagrad} where the fixed regualization function and the projection is omitted for simplicity. We let $\psi_t(x) = \frac{1}{2}x^TH_t x$. It should be obvious that $\psi_t(x)$ is strongly convex because $H_t \succeq 0$.
 
-Adagrad's simplified upudate rule is
-\begin{equation} \label{eq:adagrad_update}
-    x_{t+1}=\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}\{\eta \langle  g_t,x\rangle + B_{\psi_t}(x,x_t) \}
-\end{equation} which is the Equation (4) in Adagrad \cite{duchi2011adagrad} using composite mirror descent update rule where the fixed regualization function is omitted for simplicity.
-
-Firstly, we show that Equation~\ref{eq:adagrad_update} is equivalent to:
+The outline of the proof is that I will firstly prove that the update rule in Adagrad's algorithm is the same as the update rule in Equation~\ref{eq:adagrad_composite}. Then I will use a property of the update rule in Equation~\ref{eq:adagrad_composite} to prove the convergence.
 
 \begin{theorem}
-The update rule in Equation~\ref{eq:adagrad_update} is equivalent to the update rule: 
-\[
-x_{t+1} = x_t - \eta \nabla f(x_t),
-\]
-with a constant step size $\eta > 0$. Then the sequence satisfies
-\[
-f(x_T) - f(x^\ast) \le O\left( \frac{1}{T} \right),
-\]
-where $x^\ast$ is a minimizer of $f$.
+The update rule in Adagrad is equivalent to the update rule in Equation~\ref{eq:adagrad_composite}.
 \end{theorem}
 
 \begin{proof}
-By convexity of $f$, we have
-\[
-f(x_t) - f(x^\ast) \le \langle \nabla f(x_t), x_t - x^\ast \rangle.
-\]
-Using the update rule, expand the squared distance:
-\[
-\| x_{t+1} - x^\ast \|^2
-= \| x_t - \eta \nabla f(x_t) - x^\ast \|^2.
-\]
-Rearranging gives
-\[
-\langle \nabla f(x_t), x_t - x^\ast \rangle 
-\le \frac{ \|x_t - x^\ast\|^2 - \|x_{t+1} - x^\ast\|^2 }{2\eta}
-+ \frac{\eta}{2}\|\nabla f(x_t)\|^2.
-\]
-Summing over $t = 1,\dots,T$ telescopes the distances and yields the claimed result.
+Let \begin{equation}
+% h(x) = \eta \langle  g_t,x\rangle + B_{\psi_t}(x,x_t)
+x_{t+1} = x_t - \eta H^{-1}g_t
+\end{equation}
+Then 
+\begin{align*}
+    Hx_{t} - Hx_{t+1} = -\eta g_t
+\end{align*}
+
+hence finding
+$ x_{t+1}=
+\operatorname{arg}\operatorname*{min}_{x\in\mathcal{X}}h(x) 
+$
+is equivalent to finding 
+$
+x\in \mathcal{R} : \nabla_x(h_x) = 0
+$
+\begin{equation}
+    \nabla_x h(x) = \eta g_t + H_t x - H_t x_t \\
+\end{equation}
+Setting $\nabla_x h(x)=0$ gives 
+$$
+x= x_t - \eta H^{-1}g_t
+$$
 \end{proof}
+
+We can see that this update rule is similar to SGD or GD-like update rule.
 
 \section{Conclusion}
 A short conclusion summarizing your findings in the course project, and a discussion of open directions. Limit to at most a page.  
